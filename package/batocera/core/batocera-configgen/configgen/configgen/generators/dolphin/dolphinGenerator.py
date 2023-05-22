@@ -68,9 +68,9 @@ class DolphinGenerator(Generator):
         # Don't confirm at stop
         dolphinSettings.set("Interface", "ConfirmStop", "False")
 
-        # only 1 window (fixes exit and gui display)
-        dolphinSettings.set("Display", "RenderToMain", "True")
-        dolphinSettings.set("Display", "Fullscreen", "True")
+        # fixes exit and gui display
+        dolphinSettings.remove_option("Display", "RenderToMain")
+        dolphinSettings.remove_option("Display", "Fullscreen")
 
         # Enable Cheats
         if system.isOptSet("enable_cheats") and system.getOptBoolean("enable_cheats"):
@@ -235,6 +235,11 @@ class DolphinGenerator(Generator):
                 dolphinGFXSettings.remove_option("Enhancements", "DisableCopyFilter")
                 dolphinGFXSettings.remove_option("Enhancements", "ForceTrueColor")
 
+        if system.isOptSet('vbi_hack'):
+            dolphinGFXSettings.set("Hacks", "VISkip", system.config["vbi_hack"])
+        else:
+            dolphinGFXSettings.set("Hacks", "VISkip", "False")
+
         # Internal resolution settings
         if system.isOptSet('internal_resolution'):
             dolphinGFXSettings.set("Settings", "InternalResolution", system.config["internal_resolution"])
@@ -269,6 +274,62 @@ class DolphinGenerator(Generator):
         with open(batoceraFiles.dolphinGfxIni, 'w') as configfile:
             dolphinGFXSettings.write(configfile)
 
+        ## Hotkeys.ini - overwrite to avoid issues
+        hotkeyConfig = configparser.ConfigParser(interpolation=None)
+        # To prevent ConfigParser from converting to lower case
+        hotkeyConfig.optionxform = str
+        # [Hotkeys]
+        hotkeyConfig.add_section('Hotkeys')
+        # General - use virtual for now
+        hotkeyConfig.set('Hotkeys', 'Device', 'XInput2/0/Virtual core pointer')
+        hotkeyConfig.set('Hotkeys', 'General/Open', '@(Ctrl+O)')
+        hotkeyConfig.set('Hotkeys', 'General/Toggle Pause', 'F10')
+        hotkeyConfig.set('Hotkeys', 'General/Stop', 'Escape')
+        hotkeyConfig.set('Hotkeys', 'General/Toggle Fullscreen', '@(Alt+Return)')
+        hotkeyConfig.set('Hotkeys', 'General/Take Screenshot', 'F9')
+        hotkeyConfig.set('Hotkeys', 'General/Exit', '@(Shift+F11)')
+        # Emulation Speed
+        hotkeyConfig.set('Hotkeys', 'Emulation Speed/Disable Emulation Speed Limit', 'Tab')
+        # Stepping
+        hotkeyConfig.set('Hotkeys', 'Stepping/Step Into', 'F11')
+        hotkeyConfig.set('Hotkeys', 'Stepping/Step Over', '@(Shift+F10)')
+        hotkeyConfig.set('Hotkeys', 'Stepping/Step Out', '@(Shift+F11)')
+        # Breakpoint
+        hotkeyConfig.set('Hotkeys', 'Breakpoint/Toggle Breakpoint', '@(Shift+F9)')
+        # Wii
+        hotkeyConfig.set('Hotkeys', 'Wii/Connect Wii Remote 1', '@(Alt+F5)')
+        hotkeyConfig.set('Hotkeys', 'Wii/Connect Wii Remote 2', '@(Alt+F6)')
+        hotkeyConfig.set('Hotkeys', 'Wii/Connect Wii Remote 3', '@(Alt+F7)')
+        hotkeyConfig.set('Hotkeys', 'Wii/Connect Wii Remote 4', '@(Alt+F8)')
+        hotkeyConfig.set('Hotkeys', 'Wii/Connect Balance Board', '@(Alt+F9)')
+        # Select
+        hotkeyConfig.set('Hotkeys', 'Select State/Select State Slot 1', '@(Shift+F1)')
+        hotkeyConfig.set('Hotkeys', 'Select State/Select State Slot 2', '@(Shift+F2)')
+        # Load
+        hotkeyConfig.set('Hotkeys', 'Load State/Load from Selected Slot', 'F8')
+        # Save State
+        hotkeyConfig.set('Hotkeys', 'Save State/Save to Selected Slot', 'F5')
+        # Other State Hotkeys
+        hotkeyConfig.set('Hotkeys', 'Other State Hotkeys/Undo Load State', '@(Shift+F12)')
+        # GBA Core
+        hotkeyConfig.set('Hotkeys', 'GBA Core/Load ROM', '@(`Ctrl`+`Shift`+`O`)')
+        hotkeyConfig.set('Hotkeys', 'GBA Core/Unload ROM', '@(`Ctrl`+`Shift`+`W`)')
+        hotkeyConfig.set('Hotkeys', 'GBA Core/Reset', '@(`Ctrl`+`Shift`+`R`)')
+        # GBA Volume
+        hotkeyConfig.set('Hotkeys', 'GBA Volume/Volume Down', '`KP_Subtract`')
+        hotkeyConfig.set('Hotkeys', 'GBA Volume/Volume Up', '`KP_Add`')
+        hotkeyConfig.set('Hotkeys', 'GBA Volume/Volume Toggle Mute', '`M`')
+        # GBA Window Size
+        hotkeyConfig.set('Hotkeys', 'GBA Window Size/1x', '`KP_1`')
+        hotkeyConfig.set('Hotkeys', 'GBA Window Size/2x', '`KP_2`')
+        hotkeyConfig.set('Hotkeys', 'GBA Window Size/3x', '`KP_3`')
+        hotkeyConfig.set('Hotkeys', 'GBA Window Size/4x', '`KP_4`')
+        # 
+        # Write the configuration to the file
+        hotkey_path = '/userdata/system/configs/dolphin-emu/Hotkeys.ini'
+        with open(hotkey_path, 'w') as configfile:
+            hotkeyConfig.write(configfile)
+        
         # Update SYSCONF
         try:
             dolphinSYSCONF.update(system.config, batoceraFiles.dolphinSYSCONF, gameResolution)
@@ -277,7 +338,8 @@ class DolphinGenerator(Generator):
 
         # Check what version we've got
         if os.path.isfile("/usr/bin/dolphin-emu"):
-            commandArray = ["dolphin-emu", "-e", rom]
+            # use the -b 'batch' option for nicer exit
+            commandArray = ["dolphin-emu", "-b", "-e", rom]
         else:
             commandArray = ["dolphin-emu-nogui", "-p", "drm", "-e", rom]
         

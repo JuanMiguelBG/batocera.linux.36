@@ -16,7 +16,7 @@ eslog = get_logger(__name__)
 # Create the controller configuration file
 def generateControllerConfig(system, playersControllers, rom, guns):
 
-    generateHotkeys(playersControllers)
+    #generateHotkeys(playersControllers)
     if system.name == "wii":
         if system.isOptSet('use_guns') and system.getOptBoolean('use_guns') and len(guns) > 0:
             generateControllerConfig_guns("WiimoteNew.ini", "Wiimote", guns, system, rom)
@@ -43,13 +43,21 @@ def generateControllerConfig(system, playersControllers, rom, guns):
 
 def generateControllerConfig_emulatedwiimotes(system, playersControllers, rom):
     wiiMapping = {
-        'x':            'Buttons/2',    'b':             'Buttons/A',
-        'y':            'Buttons/1',    'a':             'Buttons/B',
-        'pageup':       'Buttons/-',    'pagedown':      'Buttons/+',
+        'x':             'Buttons/2',
+        'b':             'Buttons/A',
+        'y':             'Buttons/1',
+        'a':             'Buttons/B',
+        'pageup':        'Buttons/-',
+        'pagedown':      'Buttons/+',
         'select':       'Buttons/Home',
-        'up': 'D-Pad/Up', 'down': 'D-Pad/Down', 'left': 'D-Pad/Left', 'right': 'D-Pad/Right',
-        'joystick1up':  'IR/Up',        'joystick1left': 'IR/Left',
-        'joystick2up':  'Tilt/Forward', 'joystick2left': 'Tilt/Left',
+        'up':            'D-Pad/Up',
+        'down':          'D-Pad/Down',
+        'left':          'D-Pad/Left',
+        'right':         'D-Pad/Right',
+        'joystick1up':   'IR/Up',
+        'joystick1left': 'IR/Left',
+        'joystick2up':   'Tilt/Forward',
+        'joystick2left': 'Tilt/Left',
         'hotkey':       'Buttons/Hotkey'
     }
     wiiReverseAxes = {
@@ -216,6 +224,7 @@ def generateControllerConfig_realwiimotes(filename, anyDefKey):
         f.write("[" + anyDefKey + str(nplayer) + "]" + "\n")
         f.write("Source = 2\n")
         nplayer += 1
+    f.write("[BalanceBoard]\nSource = 2\n")
     f.write
     f.close()
 
