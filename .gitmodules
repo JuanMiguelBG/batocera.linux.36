@@ -1,4 +1,3 @@
 [submodule "buildroot"]
 	path = buildroot
-	url = https://github.com/batocera-linux/buildroot.git
-	branch = 36
+	url = https://github.com/JuanMiguelBG/batocera.buildroot.36.git
