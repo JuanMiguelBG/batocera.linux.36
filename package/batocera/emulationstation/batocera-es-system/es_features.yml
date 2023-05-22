@@ -6269,6 +6269,13 @@ dolphin:
             choices:
                 "Off": 0
                 "On":  1
+        vbi_hack:
+            group: ADVANCED OPTIONS
+            prompt: VBI SKIP
+            description: Skips Vertical Blank Interrupts when lag is detected, allowing for smooth audio playback when emulation speed is not 100%.
+            choices:
+                "Off": "False"
+                "On":  "True"
         dsmotion:
             group: ADVANCED OPTIONS
             prompt:      DUALSHOCK MOTION CONTROL
