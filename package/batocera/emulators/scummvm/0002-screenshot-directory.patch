@@ -15,7 +15,7 @@ index 20fd0faf..83c12afa 100644
  	"  --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)\n"
  	"  --savepath=PATH          Path to where saved games are stored\n"
  	"  --extrapath=PATH         Extra path to additional game data\n"
-+	"  --screenshot=PATH        Path to where screenshots are saved\n"
++	"  --screenshots=PATH       Path to where screenshots are saved\n"
  	"  --iconspath=PATH         Path to additional icons for the launcher grid view\n"
  	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
  	"                           supported by some MIDI drivers)\n"
