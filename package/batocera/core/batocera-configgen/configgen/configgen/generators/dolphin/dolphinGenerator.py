@@ -270,6 +270,11 @@ class DolphinGenerator(Generator):
         else:
             dolphinGFXSettings.set("Settings", "SSAA", "False")
 
+        if system.isOptSet('vbi_hack'):
+            dolphinGFXSettings.set("Hacks", "VISkip", system.config["vbi_hack"])
+        else:
+            dolphinGFXSettings.set("Hacks", "VISkip", "False")
+
         # Save gfx.ini
         with open(batoceraFiles.dolphinGfxIni, 'w') as configfile:
             dolphinGFXSettings.write(configfile)
